@@ -18,7 +18,6 @@ import java.util.List;
 @Slf4j
 public class AppUserServiceImpl implements AppUserService{
 
-    @Autowired
     private final AppUserRepository appUserRepository;
 
     @Autowired
@@ -26,13 +25,13 @@ public class AppUserServiceImpl implements AppUserService{
 
     @Override
     public AppUser saveAppUser(AppUser appUser) {
-        log.info("AppUserServiceImpl>> saving user data: {}",appUser);
+        log.info("AppUserServiceImpl:saveAppUser>> saving user data: {}",appUser);
         return appUserRepository.save(appUser);
     }
 
     @Override
     public AppRole saveAppRole(AppRole appRole) {
-        log.info("AppUserServiceImpl>> saving user role data: {}",appRole);
+        log.info("AppUserServiceImpl:saveAppRole>> saving user role data: {}",appRole);
         return appRoleRepository.save(appRole);
     }
 
@@ -42,20 +41,20 @@ public class AppUserServiceImpl implements AppUserService{
         AppRole appRole1=appRoleRepository.findByRoleName(appRole);
 
         appUser.getRoles().add(appRole1);
-        log.info("AppUserServiceImpl>> saving role {} to user : {}",appRole,userName);
+        log.info("AppUserServiceImpl:addAppRoleToUser>> saving role {} to user : {}",appRole,userName);
         appUserRepository.save(appUser);
     }
 
     @Override
     public AppUser getUser(String userName) {
-        log.info("AppUserServiceImpl>> get user by username {}",userName);
+        log.info("AppUserServiceImpl:getUser>> get user by username {}",userName);
         return appUserRepository.findByUserName(userName);
     }
 
     @Override
     public List<AppUser> getUsers() {
         List<AppUser> users=appUserRepository.findAll();
-        log.info("AppUserServiceImpl>> get all users, count {}", (long) users.size());
+        log.info("AppUserServiceImpl:getUsers>> get all users, count {}", (long) users.size());
         return appUserRepository.findAll();
     }
 }
