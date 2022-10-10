@@ -1,18 +1,20 @@
 package io.springboot.learn.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
-@Getter
-@Setter
+
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Data
+@Entity
 public class AppUser {
 
     @Id
@@ -21,5 +23,6 @@ public class AppUser {
     private String name;
     private String username;
     private String password;
-    private Collection<AppRole> roles;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<AppRole> roles=new ArrayList<>();
 }
