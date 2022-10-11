@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -56,16 +57,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/user-service/api/v1/roles/**")
-                .hasAnyAuthority("ROLE_ADMIN","ROLE_PO");
+                .hasAnyAuthority("ROLE_ADMIN","ROLE_PO","ROLE_TL");
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/user-service/api/v1/users/role")
-                .hasAnyAuthority("ROLE_QA","ROLE_ADMIN","ROLE_PO");
+                .hasAnyAuthority("ROLE_TL","ROLE_ADMIN","ROLE_PO");
 
         http.authorizeRequests().anyRequest().authenticated();
-
         //create new filter for authentication
         http.addFilter(customAuthenticationFilter);
+
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
 

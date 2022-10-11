@@ -21,4 +21,6 @@ public class SpringbootJwtV2Application {
 	PasswordEncoder getPasswordEncoder(){
 		return new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A);
 	}
+
+
 }
