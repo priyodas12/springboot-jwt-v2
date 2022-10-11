@@ -48,6 +48,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     Arrays.stream(roles).forEach(role->{
                         authorityCollection.add(new SimpleGrantedAuthority(role));
                     });
+
                     UsernamePasswordAuthenticationToken authenticationToken=
                             new UsernamePasswordAuthenticationToken(userName,null,authorityCollection);
 
@@ -56,6 +57,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request,response);
                 }
                 catch (Exception e){
+
                     log.error("UNAUTHORIZED ACCESS ! ,Message: {}",e.getMessage());
 
                     response.setHeader("ERROR_CODE", String.valueOf(FORBIDDEN.value()));

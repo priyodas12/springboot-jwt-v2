@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -44,24 +46,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/user-service/api/v1/user/")
-                .hasAnyAuthority("ROLE_DEV","ROLE_PO","ROLE_DEVOPS");
+                .hasAnyRole("ROLE_DEV","ROLE_PO","ROLE_DEVOPS");
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/user-service/api/v1/users/")
-                .hasAnyAuthority("ROLE_DEV","ROLE_QA","ROLE_PO","ROLE_DEVOPS");
-
+                .hasAnyRole("ROLE_DEV","ROLE_QA","ROLE_PO","ROLE_DEVOPS");
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/user-service/api/v1/users/")
-                .hasAnyAuthority("ROLE_DEV","ROLE_QA","ROLE_ADMIN","ROLE_PO");
+                .hasAnyRole("ROLE_DEV","ROLE_QA","ROLE_ADMIN","ROLE_PO");
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/user-service/api/v1/roles/**")
-                .hasAnyAuthority("ROLE_ADMIN","ROLE_PO","ROLE_TL");
+                .antMatchers(HttpMethod.POST,"/user-service/api/v1/roles/")
+                .hasAnyRole("ROLE_ADMIN","ROLE_PO","ROLE_TL");
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/user-service/api/v1/users/role")
-                .hasAnyAuthority("ROLE_TL","ROLE_ADMIN","ROLE_PO");
+                .hasAnyRole("ROLE_TL","ROLE_ADMIN","ROLE_PO");
 
         http.authorizeRequests().anyRequest().authenticated();
         //create new filter for authentication
