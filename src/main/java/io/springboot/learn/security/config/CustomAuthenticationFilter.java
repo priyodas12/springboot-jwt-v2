@@ -2,8 +2,10 @@ package io.springboot.learn.security.config;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +20,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -73,5 +78,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         //super.successfulAuthentication(request, response, chain, authResult);
         response.setHeader("ACCESS_TOKEN",accessToken);
         response.setHeader("REFRESH_TOKEN",refreshToken);
+
+        HashMap<String,String> tokenResponse=new HashMap<>();
+
+        tokenResponse.put("access_token",accessToken);
+        tokenResponse.put("timestamp", new Date().toString());
+        tokenResponse.put("refresh_token",accessToken);
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        new ObjectMapper().writeValue(response.getOutputStream(),tokenResponse);
+
     }
 }

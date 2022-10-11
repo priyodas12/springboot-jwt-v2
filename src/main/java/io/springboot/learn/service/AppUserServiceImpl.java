@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -80,14 +81,25 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     @Override
     public AppUser getUser(String userName) {
         log.info("getUser>> get user by username {}",userName);
-        return appUserRepository.findByUserName(userName);
+        AppUser appUser=appUserRepository.findByUserName(userName);
+        appUser.setPassword("***Confidential***");
+        return appUser;
     }
 
     @Override
     public List<AppUser> getUsers() {
         List<AppUser> users=appUserRepository.findAll();
         log.info("getUsers>> get all users, count {}", (long) users.size());
-        return appUserRepository.findAll();
+        return maskUserPassword(users);
+    }
+
+    private List<AppUser> maskUserPassword(List<AppUser> appUsers){
+        return appUsers.stream().filter(user->!user.getPassword().isEmpty())
+                .map(user->{
+                    AppUser user1=user;
+                    user1.setPassword("***Confidential***");
+                    return user1;
+                }).collect(Collectors.toList());
     }
 
 
