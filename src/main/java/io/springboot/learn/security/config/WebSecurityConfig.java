@@ -39,36 +39,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         customAuthenticationFilter.setFilterProcessesUrl("/user-service/api/v1/login");
 
         http.csrf().disable();
-        //http.cors().disable();
+        http.cors().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests().antMatchers("/user-service/api/v1/login/**").permitAll();
 
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.GET,"/user-service/api/v1/user/")
-                .hasAnyRole("ROLE_DEV","ROLE_PO","ROLE_DEVOPS");
-
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.GET,"/user-service/api/v1/users/")
-                .hasAnyRole("ROLE_DEV","ROLE_QA","ROLE_PO","ROLE_DEVOPS");
-
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/user-service/api/v1/users/")
-                .hasAnyRole("ROLE_DEV","ROLE_QA","ROLE_ADMIN","ROLE_PO");
-
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/user-service/api/v1/roles/")
-                .hasAnyRole("ROLE_ADMIN","ROLE_PO","ROLE_TL");
-
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/user-service/api/v1/users/role")
-                .hasAnyRole("ROLE_TL","ROLE_ADMIN","ROLE_PO");
-
-        http.authorizeRequests().anyRequest().authenticated();
         //create new filter for authentication
         http.addFilter(customAuthenticationFilter);
 
+        //create new filter for authorization
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.authorizeRequests()
+                .antMatchers("/user-service/api/v1/user/**")
+                .hasAnyAuthority("ROLE_DEV","ROLE_DEVOPS","ROLE_PO");
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.GET,"/user-service/api/v1/users")
+                .hasAnyAuthority("ROLE_DEV","ROLE_QA","ROLE_PO");
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST,"/user-service/api/v1/users")
+                .hasAnyAuthority("ROLE_DEV","ROLE_QA","ROLE_DEVOPS","ROLE_PO");
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST,"/user-service/api/v1/roles")
+                .hasAnyAuthority("ROLE_ADMIN","ROLE_TL","ROLE_PO");
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST,"/user-service/api/v1/users/role")
+                .hasAnyAuthority("ROLE_TL","ROLE_PO","ROLE_ADMIN");
+
+        http.authorizeRequests().anyRequest().authenticated();
 
     }
 
